@@ -1,0 +1,154 @@
+{
+  "lex": {
+    "rules": [
+      ["\\s+", "/* ignore whitespace */"],
+      ["[_$a-zA-Z][_$a-zA-Z0-9]*", "return 'IDENTIFIER'"],
+      ["-?[0-9]+", "return 'INTEGER'"],
+      ["\"(?:\\\\[\"bfnrt/\\\\]|\\\\u[a-fA-F0-9]{4}|[^\"\\\\])*\"",
+        "return 'DQUOTE'"],
+      ["'(?:\\\\['bfnrt/\\\\]|\\\\u[a-fA-F0-9]{4}|[^'\\\\])*'",
+        "return 'SQUOTE'"],
+      ["\\.", "return '.'"],
+      ["\\[", "return '['"],
+      ["\\]", "return ']'"],
+      ["\\{", "return '{'"],
+      ["\\}", "return '}'"],
+      ["\\:", "return ':'"],
+      ["\\,", "return ','"],
+      ["\\@", "return '@'"],
+      ["\\&", "return '&'"],
+      ["\\|", "return '|'"]
+    ]
+  },
+  "bnf": {
+    "deepField": [
+      ["chain", "return new yy.nodes.ReadWritePath($1.build())"],
+      ["sourceOnlyChain", "return new yy.nodes.ReadPath($1.build())"],
+      ["destinationOnlyChain", "return new yy.nodes.WritePath($1.build())"],
+      ["", "return new yy.nodes.ReadPath(null)"]
+    ],
+    "chain": [
+      ["root", "$$ = new yy.nodes.ChainBuilder($1)"],
+      ["chain operation", "$$ = $1.after($2)"]
+    ],
+    "root": [
+      ["IDENTIFIER", "$$ = new yy.nodes.LeadingProperty($1)"],
+      ["subscriptField", "$$ = $1"],
+      ["array", "$$ = $1"],
+      ["object", "$$ = $1"]
+    ],
+    "operation": [
+      ["dotField", "$$ = $1"],
+      ["subscriptField", "$$ = $1"],
+      ["array", "$$ = $1"],
+      ["object", "$$ = $1"]
+    ],
+    "sourceChain": [
+      ["sourceOnlyChain", "$$ = $1"],
+      ["chain", "$$ = $1"]
+    ],
+    "sourceOnlyChain": [
+      ["sourceOnlyRoot", "$$ = new yy.nodes.ChainBuilder($1)"],
+      ["sourceOnlyChain operation", "$$ = $1.after($2)"],
+      ["chain sourceOnlyOperation", "$$ = $1.after($2)"]
+    ],
+    "sourceOnlyRoot": [
+      ["&", "$$ = new yy.nodes.Self()"],
+      ["[ sourceOnlyChain ]", "$$ = new yy.nodes.DeepProperty($2.build())"],
+      ["sourceOnlyArray", "$$ = $1"],
+      ["flatArray", "$$ = $1"]
+    ],
+    "sourceOnlyOperation": [
+      ["[ sourceOnlyChain ]", "$$ = new yy.nodes.DeepProperty($2.build())"],
+      ["sourceOnlyArray", "$$ = $1"],
+      ["flatArray", "$$ = $1"]
+    ],
+    "sourceOnlyArray": [
+      ["[ sliceRange ]", "$$ = new yy.nodes.Slice([$2, null])"],
+      ["[ sliceStepRange ]", "$$ = new yy.nodes.StepSlice($2)"]
+    ],
+    "flatArray": [
+      ["| sourceOnlyArray", "$$ = $2.flat()"],
+      ["| array", "$$ = $2.flat()"]
+    ],
+    "destinationChain": [
+      ["destinationOnlyChain", "$$ = $1"],
+      ["chain", "$$ = $1"]
+    ],
+    "destinationOnlyChain": [
+      ["destinationOnlyRoot", "$$ = new yy.nodes.ChainBuilder($1)"],
+      ["destinationOnlyChain operation", "$$ = $1.after($2)"],
+      ["chain destinationOnlyOperation", "$$ = $1.after($2)"]
+    ],
+    "destinationOnlyRoot": [
+      ["[ @ ]", "$$ = new yy.nodes.Append()"],
+      ["[ @ index ]", "$$ = new yy.nodes.Insert($3)"]
+    ],
+    "destinationOnlyOperation": [
+      ["[ @ ]", "$$ = new yy.nodes.Append()"],
+      ["[ @ index ]", "$$ = new yy.nodes.Insert($2)"]
+    ],
+    "dotField": [
+      [". IDENTIFIER", "$$ = new yy.nodes.DotProperty($2)"]
+    ],
+    "subscriptField": [
+      ["[ chain ]", "$$ = new yy.nodes.DeepProperty($2.build())"],
+      ["[ doubleQuote ]", "$$ = new yy.nodes.DoubleQuoteProperty($2)"],
+      ["[ singleQuote ]", "$$ = new yy.nodes.SingleQuoteProperty($2)"],
+      ["[ index ]", "$$ = new yy.nodes.IndexProperty($2)"]
+    ],
+    "array": [
+      ["[ ]", "$$ = new yy.nodes.Array()"],
+      ["[ indexForcedList ]", "$$ = new yy.nodes.IndexedArray(Array.from($2))"],
+      ["[ chainForcedList ]", "$$ = new yy.nodes.DeepArray(Array.from($2))"]
+    ],
+    "object": [
+      ["{ }", "$$ = new yy.nodes.Object()"],
+      ["{ assignmentList }", "$$ = new yy.nodes.DeepObject(Array.from($2))"]
+    ],
+    "sliceStepRange": [
+      ["sliceRange :", "$$ = [$1, null]"],
+      ["sliceRange : INTEGER", "$$ = [$1, parseInt($3)]"]
+    ],
+    "sliceRange": [
+      [":", "$$ = [null, null]"],
+      [": index", "$$ = [null, $2]"],
+      ["index :", "$$ = [$1, null]"],
+      ["index : index", "$$ = [$1, $3]"]
+    ],
+    "singleQuote": [
+      ["SQUOTE", "$$ = $1.substring(1, $1.length - 1)"]
+    ],
+    "doubleQuote": [
+      ["DQUOTE", "$$ = $1.substring(1, $1.length - 1)"]
+    ],
+    "index": [
+      ["INTEGER", "$$ = parseInt($1)"]
+    ],
+    "indexList": [
+      ["index", "$$ = new yy.nodes.List().after($1)"],
+      ["indexList , index", "$$ =$1.after($3)"]
+    ],
+    "indexForcedList": [
+      ["index ,", "$$ = new yy.nodes.List().after($1)"],
+      ["index , indexList", "$$ = $3.before($1)"]
+    ],
+    "chainList": [
+      ["chain", "$$ = new yy.nodes.List().after($1.build())"],
+      ["chainList , chain", "$$ = $1.after($3.build())"]
+    ],
+    "chainForcedList": [
+      ["chain ,", "$$ = new yy.nodes.List().after($1.build())"],
+      ["chain , chainList", "$$ = $3.before($1.build())"]
+    ],
+    "assignmentList": [
+      ["assignment", "$$ = new yy.nodes.List().after($1)"],
+      ["assignmentList , assignment", "$$ = $1.after($3)"]
+    ],
+    "assignment": [
+      ["chain", "$$ = [$1.build(), $1.build()]"],
+      ["chain : destinationChain", "$$ = [$1.build(), $3.build()]"],
+      ["sourceOnlyChain : destinationChain", "$$ = [$1.build(), $3.build()]"]
+    ]
+  }
+}

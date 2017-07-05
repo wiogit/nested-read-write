@@ -1,0 +1,262 @@
+{
+  "read": {
+    "equality": [
+      {
+        "path": "",
+        "source": 1,
+        "expected": 1
+      }, {
+        "path": "&",
+        "source": 2,
+        "expected": 2
+      }, {
+        "path": "[3]",
+        "source": [0,1,2,3,4],
+        "expected": 3
+      }, {
+        "path": "a[0]",
+        "source": {"a": [3,4]},
+        "expected": 3
+      }, {
+        "path": "a",
+        "source": {"a": [3,4]},
+        "expected": [3,4]
+      }, {
+        "path": "[&.a]",
+        "source": {"a": [3,4]},
+        "expected": [3,4]
+      }, {
+        "path": "[&].a",
+        "source": {"a": [3,4]},
+        "expected": [3,4]
+      }, {
+        "path": "b.c",
+        "source": {"b": {"c": 5}},
+        "expected": 5
+      }, {
+        "path": "[&.b].c",
+        "source": {"b": {"c": 5}},
+        "expected": 5
+      }, {
+        "path": "b[c]",
+        "source": {"b": {"c": 5}},
+        "expected": 5
+      }, {
+        "path": "d[].e",
+        "source": {"d": [{"e": 6}, {"e": 7}]},
+        "expected": [6, 7]
+      }, {
+        "path": "[f]",
+        "source": {"f": 8},
+        "expected": 8
+      }, {
+        "path": "[\"[d].quote\"]",
+        "source": {"[d].quote": 18},
+        "expected": 18
+      }, {
+        "path": "['[s].quote']",
+        "source": {"[s].quote": 28},
+        "expected": 28
+      }, {
+        "path": "[g.h]",
+        "source": {"g": {"h": 8}},
+        "expected": 8
+      }, {
+        "path": "i.j[k.l][m].n.o",
+        "source": {"i": {"j": {"k": {"l": {"m": {"n": {"o": 9}}}}}}},
+        "expected": 9
+      }, {
+        "path": "[]",
+        "source": [10,11,12],
+        "expected": [10, 11, 12]
+      }, {
+        "path": "|[]",
+        "source": [[1,2,3,4],[5,6,7,8,9]],
+        "expected": [1,2,3,4,5,6,7,8,9]
+      }, {
+        "path": "[::]",
+        "source": [1,2,3,4,5,6,7,8,9],
+        "expected": [1,2,3,4,5,6,7,8,9]
+      }, {
+        "path": "[:]",
+        "source": [1,2,3,4,5,6,7,8,9],
+        "expected": [1,2,3,4,5,6,7,8,9]
+      }, {
+        "path": "[1:]",
+        "source": [1,2,3,4,5,6,7,8,9],
+        "expected": [2,3,4,5,6,7,8,9]
+      }, {
+        "path": "[:3]",
+        "source": [1,2,3,4,5,6,7,8,9],
+        "expected": [1,2,3]
+      }, {
+        "path": "[:-6]",
+        "source": [1,2,3,4,5,6,7,8,9],
+        "expected": [1,2,3]
+      }, {
+        "path": "[1::-1]",
+        "source": [1,2,3],
+        "expected": [2,1]
+      }, {
+        "path": "{}",
+        "source": {"p": 13, "q": 14},
+        "expected": {"p": 13, "q": 14}
+      }, {
+        "path": "{r}",
+        "source": {"r": 15},
+        "expected": {"r": 15}
+      }, {
+        "path": "{s:t}",
+        "source": {"s": 15},
+        "expected": {"t": 15}
+      }, {
+        "path": "{u.v:w.x}",
+        "source": {"u": {"v": 16}},
+        "expected": {"w": {"x": 16}}
+      }
+    ],
+    "exception": [
+      {
+        "path": "[@]"
+      }, {
+        "path": "[@1]"
+      }, {
+        "path": "[@-2]"
+      }
+    ]
+  },
+  "write": {
+    "equality": [
+      {
+        "path": "a",
+        "destination": {"b": 1},
+        "value": 2,
+        "expected": {"a": 2, "b": 1}
+      }, {
+        "path": "a",
+        "destination": {"b": 1},
+        "value": 2,
+        "expected": {"a": 2, "b": 1}
+      }, {
+        "path": "a1",
+        "destination": {"a1": 1, "b": 3},
+        "value": 2,
+        "expected": {"a1": 2, "b": 3}
+      }, {
+        "path": "c.d",
+        "destination": {"e": 3},
+        "value": 4,
+        "expected": {"c": {"d": 4}, "e": 3}
+      }, {
+        "path": "c.d1",
+        "destination": {"c": {"d1": 3}, "e": 5},
+        "value": 4,
+        "expected": {"c": {"d1": 4}, "e": 5}
+      }, {
+        "path": "[e]",
+        "destination": {},
+        "value": 6,
+        "expected": {"e": 6}
+      }, {
+        "path": "f[g.h].i",
+        "destination": {},
+        "value": 7,
+        "expected": {"f": {"g": {"h": {"i": 7}}}}
+      }, {
+        "path": "[]",
+        "destination": [],
+        "value": [1,2,3,4,5,6],
+        "expected": [1,2,3,4,5,6]
+      }, {
+        "path": "[1,2,5]",
+        "destination": [0,1,2,3,4,5,6],
+        "value": [10, 11, 12],
+        "expected": [0,10,11,3,4,12,6]
+      }, {
+        "path": "[@]",
+        "destination": [0,1,2,3],
+        "value": [4,5,6],
+        "expected": [0,1,2,3,4,5,6]
+      }, {
+        "path": "[@2]",
+        "destination": [0,1,5,6],
+        "value": [2,3,4],
+        "expected": [0,1,2,3,4,5,6]
+      }, {
+        "path": "[@-1]",
+        "destination": [0,1,6],
+        "value": [2,3,4,5],
+        "expected": [0,1,2,3,4,5,6]
+      }, {
+        "path": "[@0]",
+        "destination": [4,5,6],
+        "value": [0,1,2,3],
+        "expected": [0,1,2,3,4,5,6]
+      }, {
+        "path": "a{b:c}",
+        "destination": {},
+        "value": {"b": 4},
+        "expected": {"a": {"c": 4}}
+      }
+    ],
+    "exception": [
+      {
+        "path": ""
+      },
+      {
+        "path": "&"
+      }
+    ]
+  },
+  "standardize": [
+    {
+      "path": "",
+      "standard": ""
+    }, {
+      "path": "&",
+      "standard": ""
+    }, {
+      "path": "[3]",
+      "standard": "[3]"
+    }, {
+      "path": "a[0]",
+      "standard": "a[0]"
+    }, {
+      "path": "a",
+      "standard": "a"
+    }, {
+      "path": "[&.a]",
+      "standard": "a"
+    }, {
+      "path": "[&].a",
+      "standard": "a"
+    }, {
+      "path": "b.c",
+      "standard": "b.c"
+    }, {
+      "path": "[&.b].c",
+      "standard": "b.c"
+    }, {
+      "path": "b[c]",
+      "standard": "b.c"
+    }, {
+      "path": "d[].e",
+      "standard": "d[].e"
+    }, {
+      "path": "[f]",
+      "standard": "f"
+    }, {
+      "path": "[\"[d].quote\"]",
+      "standard": "[\"[d].quote\"]"
+    }, {
+      "path": "['[s].quote']",
+      "standard": "['[s].quote']"
+    }, {
+      "path": "[g.h]",
+      "standard": "g.h"
+    }, {
+      "path": "i.j[k.l][m].n.o",
+      "standard": "i.j.k.l.m.n.o"
+    }
+  ]
+}
