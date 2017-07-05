@@ -1,6 +1,6 @@
 {
   "name": "nested-read-write",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "JavaScript module for doing operations on nested objects",
   "main": "src/parser.js",
   "scripts": {
