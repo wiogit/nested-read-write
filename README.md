@@ -109,7 +109,7 @@ Object operations will collect values into an object. Shallow operations on this
 nrw.parse('{a,b:c}').read({a:1,b:2}) // returns {a:1,c:2}
 ```
 ## Writing `.write(dest, value)`
-Write operations as you might expect once you understand read operations. There are a few caveats specific to write operations, though.
+Write operations function as you might expect once you understand read operations. There are a few caveats specific to write operations, though.
 
 ### Property
 When you write to property that doesn't exist, objects/arrays will be created to ensure you write are setting the property of something other than undefined.
